@@ -12,7 +12,7 @@ import paymentRouter from "./routes/payment.route.js"
 
 const app = express()
 app.use(cors({
-    origin:"https://smarthire-ai-client.onrender.com",
+   origin: "https://fir-1437d.web.app",
     credentials:true
 }))
 
