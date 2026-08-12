@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import {getAuth, GoogleAuthProvider} from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
-  authDomain: "smarthire-ai-4c740.firebaseapp.com",
-  projectId: "smarthire-ai-4c740",
-  storageBucket: "smarthire-ai-4c740.firebasestorage.app",
-  messagingSenderId: "501048969999",
-  appId: "1:501048969999:web:8e884f39dea7e3f014cc7a",
-  measurementId: "G-HY723RPH33"
+  apiKey: "AIzaSyDPhEgUjnfOTushCFm5APcYuSbdaP_W0i4",
+  authDomain: "fir-1437d.firebaseapp.com",
+  projectId: "fir-1437d",
+  storageBucket: "fir-1437d.firebasestorage.app",
+  messagingSenderId: "1039705255058",
+  appId: "1:1039705255058:web:bb0a108ed439a7ee444a4b",
+  measurementId: "G-RDHQBYB6WB"
 };
 
 
