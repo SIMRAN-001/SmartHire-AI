@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setUserData } from '../redux/userSlice';
+import { setUserData } from '../redux/userSlice'
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
-import { motion } from 'motion/react';
-import axios from 'axios';
+import { motion } from 'motion/react'
+import axios from 'axios'
 
-const ServerUrl = "https://smarthire-ai-jxz5.onrender.com";
+const ServerUrl = "https://smarthire-ai-jxz5.onrender.com"
 
 function Pricing() {
   const navigate = useNavigate()
-  const [selectedPlan, setSelectedPlan] = useState("free");
-  const [loadingPlan, setLoadingPlan] = useState(null);
-
   const dispatch = useDispatch()
+
+  const [selectedPlan, setSelectedPlan] = useState("free")
+  const [loadingPlan, setLoadingPlan] = useState(null)
 
   const plans = [
     {
@@ -57,15 +57,18 @@ function Pricing() {
       ],
       badge: "Best Value",
     },
-  ];
+  ]
 
   const handlePayment = async (plan) => {
     try {
-      setLoadingPlan(plan.id);
+      setLoadingPlan(plan.id)
 
       const amount =
-        plan.id === "basic" ? 100 :
-        plan.id === "pro" ? 500 : 0;
+        plan.id === "basic"
+          ? 100
+          : plan.id === "pro"
+            ? 500
+            : 0
 
       // Create Razorpay order
       const result = await axios.post(
@@ -75,12 +78,14 @@ function Pricing() {
           amount: amount,
           credits: plan.credits,
         },
-        { withCredentials: true }
-      );
+        {
+          withCredentials: true,
+        }
+      )
 
-      console.log("Order response:", result.data);
+      console.log("Order response:", result.data)
 
-      // Razorpay options
+      // Razorpay configuration
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: result.data.amount,
@@ -89,57 +94,76 @@ function Pricing() {
         description: `${plan.name} - ${plan.credits} Credits`,
         order_id: result.data.id,
 
+        // Verify payment after successful payment
         handler: async function (response) {
           try {
-            console.log("Payment response:", response);
+            console.log("Payment response:", response)
 
-            // Verify payment
             const verifypay = await axios.post(
               `${ServerUrl}/api/payment/verify`,
               response,
-              { withCredentials: true }
-            );
+              {
+                withCredentials: true,
+              }
+            )
 
-            console.log("Verification response:", verifypay.data);
+            console.log(
+              "Verification response:",
+              verifypay.data
+            )
 
-            dispatch(setUserData(verifypay.data.user));
+            dispatch(setUserData(verifypay.data.user))
 
-            alert("Payment Successful 🎉 Credits Added!");
+            alert("Payment Successful 🎉 Credits Added!")
 
-            navigate("/");
+            navigate("/")
           } catch (error) {
-            console.error("Payment verification failed:", error);
-            alert("Payment verification failed.");
+            console.error(
+              "Payment verification failed:",
+              error
+            )
+
+            alert("Payment verification failed.")
           }
         },
 
         theme: {
           color: "#10b981",
         },
-      };
+      }
 
-      const rzp = new window.Razorpay(options);
+      // Open Razorpay
+      const rzp = new window.Razorpay(options)
 
-      rzp.open();
+      rzp.open()
 
-      setLoadingPlan(null);
+      setLoadingPlan(null)
 
     } catch (error) {
-      console.error("Payment error:", error);
-      setLoadingPlan(null);
+      console.error("Payment error:", error)
+
+      if (error.response) {
+        console.error(
+          "Server response:",
+          error.response.data
+        )
+      }
+
+      setLoadingPlan(null)
     }
-  };
+  }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-16 px-6'>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-16 px-6">
 
-      <div className='max-w-6xl mx-auto mb-14 flex items-start gap-4'>
+      {/* Header */}
+      <div className="max-w-6xl mx-auto mb-14 flex items-start gap-4">
 
         <button
           onClick={() => navigate("/")}
-          className='mt-2 p-3 rounded-full bg-white shadow hover:shadow-md transition'
+          className="mt-2 p-3 rounded-full bg-white shadow hover:shadow-md transition"
         >
-          <FaArrowLeft className='text-gray-600' />
+          <FaArrowLeft className="text-gray-600" />
         </button>
 
         <div className="text-center w-full">
@@ -154,22 +178,28 @@ function Pricing() {
 
       </div>
 
-      <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto'>
+      {/* Plans */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
         {plans.map((plan) => {
+
           const isSelected = selectedPlan === plan.id
 
           return (
             <motion.div
               key={plan.id}
-              whileHover={!plan.default && { scale: 1.03 }}
-              onClick={() => !plan.default && setSelectedPlan(plan.id)}
+              whileHover={!plan.default ? { scale: 1.03 } : {}}
+              onClick={() =>
+                !plan.default && setSelectedPlan(plan.id)
+              }
               className={`relative rounded-3xl p-8 transition-all duration-300 border ${
                 isSelected
                   ? "border-emerald-600 shadow-2xl bg-white"
                   : "border-gray-200 bg-white shadow-md"
               } ${
-                plan.default ? "cursor-default" : "cursor-pointer"
+                plan.default
+                  ? "cursor-default"
+                  : "cursor-pointer"
               }`}
             >
 
@@ -194,6 +224,7 @@ function Pricing() {
 
               {/* Price */}
               <div className="mt-4">
+
                 <span className="text-3xl font-bold text-emerald-600">
                   {plan.price}
                 </span>
@@ -201,6 +232,7 @@ function Pricing() {
                 <p className="text-gray-500 mt-1">
                   {plan.credits} Credits
                 </p>
+
               </div>
 
               {/* Description */}
@@ -210,24 +242,33 @@ function Pricing() {
 
               {/* Features */}
               <div className="mt-6 space-y-3 text-left">
+
                 {plan.features.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3">
+
+                  <div
+                    key={i}
+                    className="flex items-center gap-3"
+                  >
                     <FaCheckCircle className="text-emerald-500 text-sm" />
 
                     <span className="text-gray-700 text-sm">
                       {feature}
                     </span>
                   </div>
+
                 ))}
+
               </div>
 
+              {/* Payment Button */}
               {!plan.default && (
+
                 <button
                   disabled={loadingPlan === plan.id}
                   onClick={(e) => {
-                    e.stopPropagation();
+                    e.stopPropagation()
 
-                    if (!selectedPlan) {
+                    if (selectedPlan !== plan.id) {
                       setSelectedPlan(plan.id)
                     } else {
                       handlePayment(plan)
@@ -239,12 +280,15 @@ function Pricing() {
                       : "bg-gray-100 text-gray-700 hover:bg-emerald-50"
                   }`}
                 >
+
                   {loadingPlan === plan.id
                     ? "Processing..."
                     : isSelected
                       ? "Proceed to Pay"
                       : "Select Plan"}
+
                 </button>
+
               )}
 
             </motion.div>
