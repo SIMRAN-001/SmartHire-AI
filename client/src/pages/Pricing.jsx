@@ -5,6 +5,7 @@ import { setUserData } from '../redux/userSlice';
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
 import { color, motion } from 'motion/react';
 import axios from 'axios';
+import { ServerUrl } from '../App';
 
 function Pricing() {
   const navigate = useNavigate()
@@ -65,7 +66,7 @@ function Pricing() {
         plan.id === "basic" ? 100 :
           plan.id === "pro" ? 500 : 0;
 
-      const result = await axios.post("http://localhost:8000/api/payment/order", {
+      const result = await axios.post(ServerUrl + "/api/payment/order", {
         planId: plan.id,
         amount: amount,
         credits: plan.credits,
@@ -86,7 +87,7 @@ function Pricing() {
           console.log("Payment response:", response);
 
           const verifypay = await axios.post(
-            "http://localhost:8000/api/payment/verify",
+            ServerUrl + "/api/payment/verify",
             response,
             { withCredentials: true }
           );
