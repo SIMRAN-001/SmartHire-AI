@@ -3,9 +3,10 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setUserData } from '../redux/userSlice';
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
-import { color, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import axios from 'axios';
-import { ServerUrl } from '../App';
+
+const ServerUrl = "https://smarthire-ai-jxz5.onrender.com";
 
 function Pricing() {
   const navigate = useNavigate()
@@ -66,11 +67,11 @@ function Pricing() {
         plan.id === "basic" ? 100 :
           plan.id === "pro" ? 500 : 0;
 
-      const result = await axios.post(`${ServerUrl}/api/payment/order`, {
-        planId: plan.id,
-        amount: amount,
-        credits: plan.credits,
-      }, { withCredentials: true })
+      const verifypay = await axios.post(
+      `${ServerUrl}/api/payment/verify`,
+       response,
+        { withCredentials: true }
+       );
 
       console.log(result.data)
 
